@@ -16,7 +16,7 @@
     ],
     "require": {
         "php": ">=7.4",
-        "nesbot/carbon": "2.*",
+        "nesbot/carbon": "3.*",
         "ext-openssl": "*",
         "ext-dom": "*",
         "ext-curl": "*",
