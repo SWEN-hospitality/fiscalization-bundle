@@ -24,6 +24,8 @@ class Fiskalizacija
     private $privateKeyResource;
     private $publicCertificateData;
     private $signedInfoSignature;
+    private $lastRequestXml = null;
+    private $lastResponseXml = null;
 
     public function __construct($path, $pass, $security = 'SSL', $demo = false)
     {
@@ -177,8 +179,13 @@ class Fiskalizacija
 
     public function sendSoap($payload)
     {
-        $client = new SoapClient($this->url, $this->security);
-        return $client->send($payload);
+        $client   = new SoapClient($this->url, $this->security);
+        $response = $client->send($payload);
+
+        $this->lastRequestXml = $client->getLastRequest();
+        $this->lastResponseXml = $client->getLastResponse();
+
+        return $response;
     }
 
     public function parseResponse($response, $code = 4)
@@ -207,6 +214,7 @@ class Fiskalizacija
         $xml        = $serializer->toXml();
 
         $soapMessage = $this->signXML($xml);
+        $this->lastRequestXml = $soapMessage;
 
         return $this->sendSoap($soapMessage);
     }
@@ -216,4 +224,13 @@ class Fiskalizacija
         return openssl_x509_parse($this->certificate['cert']);
     }
 
+    public function getLastRequestXml()
+    {
+        return $this->lastRequestXml;
+    }
+
+    public function getLastResponseXml()
+    {
+        return $this->lastResponseXml;
+    }
 }

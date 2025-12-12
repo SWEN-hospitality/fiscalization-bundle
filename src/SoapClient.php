@@ -9,6 +9,8 @@ class SoapClient
 {
     protected $url;
     protected $security;
+    protected $lastRequest = null;
+    protected $lastResponse = null;
 
     public function __construct($url, $security = "TLS")
     {
@@ -45,15 +47,28 @@ class SoapClient
 
         curl_setopt_array($ch, $options);
 
+        $this->lastRequest = $payload;
+
         $response = curl_exec($ch);
         $code     = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         if ($response) {
+            $this->lastResponse = $response;
             curl_close($ch);
             return $this->parseResponse($response, $code);
         } else {
             throw new Exception(curl_error($ch));
             curl_close($ch);
         }
+    }
+
+    public function getLastRequest()
+    {
+        return $this->lastRequest;
+    }
+
+    public function getLastResponse()
+    {
+        return $this->lastResponse;
     }
 
     public function addEnvelope($xml)
@@ -94,6 +109,5 @@ class SoapClient
                 throw new Exception(print_r($response, true), $code);
             }
         }
-
     }
 }

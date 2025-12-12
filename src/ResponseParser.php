@@ -8,9 +8,11 @@ class ResponseParser
 {
     private $document;
     private $xpath;
+    private $raw;
 
     public function __construct($response)
     {
+        $this->raw = $response;
         $this->document = new DOMDocument();
         $this->document->loadXML($response);
         $this->xpath = new DOMXPath($this->document);
@@ -46,6 +48,11 @@ class ResponseParser
     public function document()
     {
         return $this->document;
+    }
+
+    public function raw()
+    {
+        return $this->raw;
     }
 
     public function query($query)
