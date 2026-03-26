@@ -3,7 +3,6 @@
 use DateTime;
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\ErrorCorrectionLevel;
-use Endroid\QrCode\QrCode;
 
 class QRGenerator
 {
@@ -34,11 +33,12 @@ class QRGenerator
     public function getQrCode()
     {
         $url    = $this->generateUrl();
-        $result = Builder::create()
-            ->data($url)
-            ->size(135)
-            ->errorCorrectionLevel(ErrorCorrectionLevel::Medium)
-            ->build();
+        $result = (new Builder())
+            ->build(
+                data: $url,
+                errorCorrectionLevel: ErrorCorrectionLevel::Medium,
+                size: 135,
+            );
 
         return $result->getDataUri();
     }
